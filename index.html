@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Песочница: Таблица статистики ПГУТИ</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        /* Базовые стили */
+        .stat-safe-wrap,
+        .stat-safe-wrap * {
+            box-sizing: border-box;
+        }
+
+        .stat-safe-wrap {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .stat-safe-wrap img,
+        .stat-safe-wrap iframe,
+        .stat-safe-wrap svg {
+            max-width: 100% !important;
+            height: auto;
+        }
+
+        .container-summ-1,
+        .container-legend {
+            max-width: 500px;
+            margin: 0 auto 20px;
+        }
+
+        .table-statistics {
+            font-weight: 100;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-statistics td,
+        .table-statistics th {
+            text-align: center;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            padding: 8px 6px;
+            border: 1px solid #ddd;
+            font-size: 13px;
+            line-height: 1.3;
+        }
+
+        .table-statistics thead,
+        .table-statistics tfoot {
+            background: #eee;
+            color: #000;
+        }
+
+        .table-statistics thead th {
+            font-weight: 700;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .table-statistics .default {
+            background-color: #d1d1d1;
+        }
+
+        .table-statistics .success {
+            background-color: #92D050;
+        }
+
+        .table-statistics .warning {
+            background-color: #FF7F00;
+            color: #fff;
+        }
+
+        .table-statistics .info {
+            background-color: #D6E3BC;
+        }
+
+        .stat-safe-wrap table {
+            max-width: 100%;
+        }
+
+        /* Ноутбуки: 760–1024px */
+        @media (min-width: 760px) and (max-width: 1024px) {
+
+            .container-summ-1,
+            .container-legend {
+                max-width: 100%;
+            }
+
+            .table-responsive {
+                width: 100%;
+                margin-bottom: 20px;
+                overflow-y: hidden;
+                overflow-x: auto;
+                -ms-overflow-style: -ms-autohiding-scrollbar;
+                border: 1px solid #dddddd;
+                -webkit-overflow-scrolling: touch;
+                border-radius: 6px;
+                position: relative;
+            }
+
+            .table-responsive>.table {
+                margin-bottom: 0;
+                min-width: 900px;
+                border-collapse: separate;
+                border-spacing: 0;
+            }
+
+            /* Фиксация первой колонки */
+            .table-responsive>.table>thead>tr>th:first-child,
+            .table-responsive>.table>tbody>tr>td:first-child,
+            .table-responsive>.table>tfoot>tr>th:first-child {
+                position: -webkit-sticky;
+                position: sticky;
+                left: 0;
+                background: #eeeeee;
+                z-index: 3;
+                min-width: 95px;
+                font-weight: bold;
+                border-right: 2px solid #0c426f;
+                box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .table-responsive>.table>thead>tr>th:first-child {
+                background: #e0e0e0;
+                z-index: 4;
+                border-right: 2px solid #0c426f;
+                border-bottom: 2px solid #0c426f;
+            }
+
+            .table-responsive>.table>tfoot>tr>th:first-child {
+                background: #d1d1d1;
+                z-index: 3;
+                border-right: 2px solid #0c426f;
+                border-top: 2px solid #0c426f;
+            }
+
+            .table-responsive>.table>thead>tr>th,
+            .table-responsive>.table>thead>tr>td,
+            .table-responsive>.table>tbody>tr>th,
+            .table-responsive>.table>tbody>tr>td,
+            .table-responsive>.table>tfoot>tr>th,
+            .table-responsive>.table>tfoot>tr>td {
+                white-space: nowrap;
+            }
+
+            .table-responsive>.table-bordered {
+                border: 0;
+            }
+
+            .table-responsive>.table-bordered>thead>tr>th:first-child,
+            .table-responsive>.table-bordered>thead>tr>td:first-child,
+            .table-responsive>.table-bordered>tbody>tr>th:first-child,
+            .table-responsive>.table-bordered>tbody>tr>td:first-child,
+            .table-responsive>.table-bordered>tfoot>tr>th:first-child,
+            .table-responsive>.table-bordered>tfoot>tr>td:first-child {
+                border-left: 0;
+            }
+
+            .table-responsive>.table-bordered>thead>tr>th:last-child,
+            .table-responsive>.table-bordered>thead>tr>td:last-child,
+            .table-responsive>.table-bordered>tbody>tr>th:last-child,
+            .table-responsive>.table-bordered>tbody>tr>td:last-child,
+            .table-responsive>.table-bordered>tfoot>tr>th:last-child,
+            .table-responsive>.table-bordered>tfoot>tr>td:last-child {
+                border-right: 0;
+            }
+
+            .table-responsive>.table-bordered>tbody>tr:last-child>th,
+            .table-responsive>.table-bordered>tbody>tr:last-child>td,
+            .table-responsive>.table-bordered>tfoot>tr:last-child>th,
+            .table-responsive>.table-bordered>tfoot>tr:last-child>td {
+                border-bottom: 0;
+            }
+
+            /* Скролл-бар */
+            .table-responsive::-webkit-scrollbar {
+                height: 10px;
+            }
+
+            .table-responsive::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 5px;
+            }
+
+            .table-responsive::-webkit-scrollbar-thumb {
+                background: #0c426f;
+                border-radius: 5px;
+            }
+
+            .table-responsive::-webkit-scrollbar-thumb:hover {
+                background: #09355a;
+            }
+        }
+
+        /* Планшеты: ≤ 760px */
+        @media (max-width: 760px) {
+
+            .container-summ-1,
+            .container-legend {
+                max-width: 100%;
+            }
+
+            .table-responsive {
+                width: 100%;
+                margin-bottom: 16.5px;
+                overflow-y: hidden;
+                overflow-x: auto;
+                -ms-overflow-style: -ms-autohiding-scrollbar;
+                border: 1px solid #dddddd;
+                -webkit-overflow-scrolling: touch;
+                border-radius: 6px;
+                position: relative;
+            }
+
+            .table-responsive>.table {
+                margin-bottom: 0;
+                min-width: 700px;
+                border-collapse: separate;
+                border-spacing: 0;
+            }
+
+            /* Фиксация первой колонки */
+            .table-responsive>.table>thead>tr>th:first-child,
+            .table-responsive>.table>tbody>tr>td:first-child,
+            .table-responsive>.table>tfoot>tr>th:first-child {
+                position: -webkit-sticky;
+                position: sticky;
+                left: 0;
+                background: #eeeeee;
+                z-index: 3;
+                min-width: 90px;
+                max-width: 90px;
+                font-weight: bold;
+                border-right: 2px solid #0c426f;
+                box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .table-responsive>.table>thead>tr>th:first-child {
+                background: #e0e0e0;
+                z-index: 4;
+                border-right: 2px solid #0c426f;
+                border-bottom: 2px solid #0c426f;
+            }
+
+            .table-responsive>.table>tfoot>tr>th:first-child {
+                background: #d1d1d1;
+                z-index: 3;
+                border-right: 2px solid #0c426f;
+                border-top: 2px solid #0c426f;
+            }
+
+            .table-responsive>.table>thead>tr>th,
+            .table-responsive>.table>thead>tr>td,
+            .table-responsive>.table>tbody>tr>th,
+            .table-responsive>.table>tbody>tr>td,
+            .table-responsive>.table>tfoot>tr>th,
+            .table-responsive>.table>tfoot>tr>td {
+                white-space: nowrap;
+            }
+
+            .table-responsive>.table-bordered {
+                border: 0;
+            }
+
+            .table-responsive>.table-bordered>thead>tr>th:first-child,
+            .table-responsive>.table-bordered>thead>tr>td:first-child,
+            .table-responsive>.table-bordered>tbody>tr>th:first-child,
+            .table-responsive>.table-bordered>tbody>tr>td:first-child,
+            .table-responsive>.table-bordered>tfoot>tr>th:first-child,
+            .table-responsive>.table-bordered>tfoot>tr>td:first-child {
+                border-left: 0;
+            }
+
+            .table-responsive>.table-bordered>thead>tr>th:last-child,
+            .table-responsive>.table-bordered>thead>tr>td:last-child,
+            .table-responsive>.table-bordered>tbody>tr>th:last-child,
+            .table-responsive>.table-bordered>tbody>tr>td:last-child,
+            .table-responsive>.table-bordered>tfoot>tr>th:last-child,
+            .table-responsive>.table-bordered>tfoot>tr>td:last-child {
+                border-right: 0;
+            }
+
+            .table-responsive>.table-bordered>tbody>tr:last-child>th,
+            .table-responsive>.table-bordered>tbody>tr:last-child>td,
+            .table-responsive>.table-bordered>tfoot>tr:last-child>th,
+            .table-responsive>.table-bordered>tfoot>tr:last-child>td {
+                border-bottom: 0;
+            }
+
+            .table-responsive::-webkit-scrollbar {
+                height: 8px;
+            }
+
+            .table-responsive::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 4px;
+            }
+
+            .table-responsive::-webkit-scrollbar-thumb {
+                background: #0c426f;
+                border-radius: 4px;
+            }
+
+            .table-responsive::-webkit-scrollbar-thumb:hover {
+                background: #09355a;
+            }
+        }
+
+        /* Мобильные: ≤ 480px */
+        @media (max-width: 480px) {
+            .stat-safe-wrap {
+                padding: 0;
+            }
+
+            .container-legend {
+                margin-bottom: 12px;
+            }
+
+            .container-legend .table-statistics td {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+
+            .table-responsive {
+                border-radius: 4px;
+                margin-bottom: 12px;
+            }
+
+            .table-responsive>.table {
+                min-width: 600px;
+            }
+
+            .table-statistics td,
+            .table-statistics th {
+                padding: 6px 4px;
+                font-size: 11px;
+                line-height: 1.2;
+            }
+
+            .table-statistics thead th {
+                font-size: 10px;
+            }
+
+            .table-responsive>.table>thead>tr>th:first-child,
+            .table-responsive>.table>tbody>tr>td:first-child,
+            .table-responsive>.table>tfoot>tr>th:first-child {
+                position: -webkit-sticky;
+                position: sticky;
+                left: 0;
+                background: #f5f5f5;
+                z-index: 2;
+                min-width: 80px;
+                white-space: nowrap;
+                overflow: visible;
+                text-overflow: clip;
+                font-weight: 700;
+                border-right: 2px solid #0c426f;
+                box-shadow: 2px 0 4px rgba(0, 0, 0, 0.08);
+            }
+
+            .table-responsive>.table>thead>tr>th:first-child {
+                background: #e0e0e0;
+                z-index: 3;
+            }
+
+            .table-responsive>.table>tfoot>tr>th:first-child {
+                background: #d1d1d1;
+                z-index: 3;
+            }
+        }
+
+        /* Очень маленькие: ≤ 400px */
+        @media (max-width: 400px) {
+            .stat-safe-wrap {
+                padding: 0;
+            }
+
+            .alert {
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+
+            .container-legend .table-statistics td {
+                padding: 5px 6px;
+                font-size: 11px;
+            }
+
+            .table-responsive>.table {
+                min-width: 550px;
+            }
+
+            .table-statistics td,
+            .table-statistics th {
+                padding: 5px 3px;
+                font-size: 10px;
+            }
+
+            .table-statistics thead th {
+                font-size: 9px;
+                padding: 4px 3px;
+            }
+
+            .table-responsive>.table>thead>tr>th:first-child,
+            .table-responsive>.table>tbody>tr>td:first-child,
+            .table-responsive>.table>tfoot>tr>th:first-child {
+                min-width: 90px;
+                font-size: 10px;
+                white-space: nowrap;
+                overflow: visible;
+                text-overflow: clip;
+            }
+        }
+
+        /* Экстремально маленькие: ≤ 320px */
+        @media (max-width: 320px) {
+            .stat-safe-wrap {
+                padding: 0;
+            }
+
+            .alert {
+                font-size: 11px;
+                padding: 6px 8px;
+            }
+
+            .container-legend .table-statistics td {
+                padding: 4px 5px;
+                font-size: 10px;
+            }
+
+            .table-responsive>.table {
+                min-width: 480px;
+            }
+
+            .table-statistics td,
+            .table-statistics th {
+                padding: 4px 2px;
+                font-size: 9px;
+                line-height: 1.1;
+            }
+
+            .table-statistics thead th {
+                font-size: 8px;
+                padding: 3px 2px;
+            }
+
+            .table-responsive>.table>thead>tr>th:first-child,
+            .table-responsive>.table>tbody>tr>td:first-child,
+            .table-responsive>.table>tfoot>tr>th:first-child {
+                min-width: 81px;
+                font-size: 9px;
+                white-space: nowrap;
+                overflow: visible;
+                text-overflow: clip;
+                padding-left: 4px;
+                padding-right: 4px;
+            }
+
+            .table-statistics thead th:first-child {
+                font-size: 8px;
+                padding: 3px 2px;
+            }
+
+            .table-statistics tfoot th {
+                font-size: 9px;
+                padding: 4px 2px;
+            }
+        }
+
+        /* Версия для слабовидящих */
+        body.pg-blind .table-statistics td,
+        body.pg-blind .table-statistics th,
+        body.special .table-statistics td,
+        body.special .table-statistics th,
+        body.bvi-active .table-statistics td,
+        body.bvi-active .table-statistics th {
+            font-size: 16px !important;
+            padding: 12px !important;
+            color: #000 !important;
+            background: #fff !important;
+            border: 2px solid #000 !important;
+        }
+
+        body.pg-blind .table-statistics thead,
+        body.pg-blind .table-statistics tfoot,
+        body.special .table-statistics thead,
+        body.special .table-statistics tfoot,
+        body.bvi-active .table-statistics thead,
+        body.bvi-active .table-statistics tfoot {
+            background: #000 !important;
+            color: #fff !important;
+        }
+
+        body.pg-blind .table-statistics .success,
+        body.special .table-statistics .success,
+        body.bvi-active .table-statistics .success {
+            background: #fff !important;
+            color: #000 !important;
+            border: 3px solid #000 !important;
+        }
+
+        body.pg-blind .table-statistics .success::before,
+        body.special .table-statistics .success::before,
+        body.bvi-active .table-statistics .success::before {
+            content: "✓ ";
+            font-weight: 900;
+        }
+
+        body.pg-blind .table-statistics .warning,
+        body.special .table-statistics .warning,
+        body.bvi-active .table-statistics .warning {
+            background: #fff !important;
+            color: #000 !important;
+            border: 3px dashed #000 !important;
+        }
+
+        body.pg-blind .table-statistics .warning::before,
+        body.special .table-statistics .warning::before,
+        body.bvi-active .table-statistics .warning::before {
+            content: "⚠ ";
+            font-weight: 900;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="stat-safe-wrap">
+        <div class="alert alert-info">
+            Время последнего обновления:
+            <time id="time">10:03 26-06-2026</time>
+        </div>
+
+        <div class="container-legend">
+            <table class="table table-bordered table-statistics">
+                <tbody>
+                    <tr>
+                        <td colspan="2">
+                            Количество поданных заявлений в день:<br>Оригиналы/Копии
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="info" colspan="2">
+                            Количество поданных заявлений на направления:<br>Общее число (Оригиналы/Копии)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="warning">Конкурс на направление</td>
+                        <td class="success">Есть вакантные места</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h4>Статистика подачи заявлений на бюджетные места бакалавриата и специалитета очной формы обучения</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover table-statistics">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>09.03.01<br>ИВТпурс<br>25 мест</th>
+                        <th>09.03.01<br>ИВТрвсмп<br>50 мест</th>
+                        <th>09.03.02<br>ИСТиист<br>65 мест</th>
+                        <th>09.03.02<br>ИСТримп<br>24 мест</th>
+                        <th>09.03.03<br>ПИацб<br>25 мест</th>
+                        <th>09.03.03<br>ПИуци<br>20 мест</th>
+                        <th>09.03.04<br>ПрИ<br>25 мест</th>
+                        <th>11.03.01<br>РТ<br>20 мест</th>
+                        <th>11.03.02<br>ИКТ<br>25 мест</th>
+                        <th>11.03.02<br>ИКТкти<br>25 мест</th>
+                        <th>11.03.02<br>ИКТпасc<br>90 мест</th>
+                        <th>11.03.02<br>ИКТпаср<br>90 мест</th>
+                        <th>10.05.02<br>ИБТС<br>50 мест</th>
+                        <th>10.03.01<br>ИБ<br>75 мест</th>
+                        <th>Итого</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>25.06.2026</td>
+                        <td>1/2</td>
+                        <td>0/5</td>
+                        <td>0/2</td>
+                        <td>0/4</td>
+                        <td>0/4</td>
+                        <td>1/2</td>
+                        <td>0/6</td>
+                        <td>0/1</td>
+                        <td>0/0</td>
+                        <td>0/1</td>
+                        <td>0/4</td>
+                        <td>0/2</td>
+                        <td>0/2</td>
+                        <td>0/3</td>
+                        <td>40 (2/38)</td>
+                    </tr>
+                    <tr>
+                        <td>26.06.2026</td>
+                        <td>0/1</td>
+                        <td>0/2</td>
+                        <td>0/0</td>
+                        <td>0/1</td>
+                        <td>0/0</td>
+                        <td>0/0</td>
+                        <td>0/0</td>
+                        <td>0/0</td>
+                        <td>0/0</td>
+                        <td>0/0</td>
+                        <td>0/0</td>
+                        <td>0/0</td>
+                        <td>0/0</td>
+                        <td>0/1</td>
+                        <td>5 (0/5)</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th class="default">Итого</th>
+                        <th class="success">4 (1/3)</th>
+                        <th class="success">7 (0/7)</th>
+                        <th class="success">2 (0/2)</th>
+                        <th class="success">5 (0/5)</th>
+                        <th class="success">4 (0/4)</th>
+                        <th class="success">3 (1/2)</th>
+                        <th class="success">6 (0/6)</th>
+                        <th class="success">1 (0/1)</th>
+                        <th class="success">0 (0/0)</th>
+                        <th class="success">1 (0/1)</th>
+                        <th class="success">4 (0/4)</th>
+                        <th class="success">2 (0/2)</th>
+                        <th class="success">2 (0/2)</th>
+                        <th class="success">4 (0/4)</th>
+                        <th class="info">45 (2/43)</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="alert alert-info" style="margin-top: 15px;">
+            В ячейке таблицы первое число означает количество поданных заявлений с оригиналами документов, второе число
+            — количество заявлений с копиями (оригинал / копия).
+        </div>
+
+        <p style="margin-top: 20px; font-size: 13px; color: #666;">
+            <strong>Техническое сопровождение</strong><br>
+            Управление информатизации ПГУТИ<br>
+            E-mail: <a href="mailto:helpdesk@psuti.ru">helpdesk@psuti.ru</a>
+        </p>
+    </div>
+
+    <script>
+        // Обновление времени
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) + ' ' +
+            now.toLocaleDateString('ru-RU');
+        document.getElementById('time').textContent = timeStr;
+    </script>
+</body>
+
+</html>
